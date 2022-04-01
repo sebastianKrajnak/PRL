@@ -4,7 +4,7 @@
 
 using namespace std;
 
-/* int loadNumbers(){
+int loadNumbers(){
     int numbers[8] = {};
 
     fstream srcFile;
@@ -32,49 +32,32 @@ using namespace std;
 
 void printNumbers(int numbers[8]){
     for(int i = 0; i < 8; i++){
-        cout << numbers[i];
+        cout << numbers[i] << ' ';
     }
     cout << endl << flush;
-} */
+}
 
 int main(int argc, char *argv[]){
-    int processors[19][5]={
-        {},{},{},{},
-        {},{},{},{},
-        {},{},{},{},
-        {},{},{},{},
-        {},{},{}
+    int processors[19][2]={
+        {4,5},{4,5},{6,7},{6,7},
+        {10,8},{8,13},{10,9},{9,13},
+        {12,11},{12,11},{0,14},{14,18},
+        {16,15},{15,0},{16,17},{17,18},
+        {0,0},{0,0},{0,0}
     };
+
     int rank, size;
+    int numbers[8] = {};
+
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-    unsigned int arr[size];
-
-    if (rank == 0) {
-        int number;
-        int arr_idx = 0;
-        fstream fin;
-        fin.open("numbers", ios::in);
-
-        fin.seekg(0, ios::end);
-        int fileSize = fin.tellg();
-        fin.seekg(0, ios::beg);
-
-        while (fin.good()) {
-            number = fin.get();
-            if (!fin.good()) break;
-            array[arr_idx++] = number;
-        }
-        fin.close();
-
-        for (int i = 0; i < fileSize; i++) {
-            printf("%d ", array[i]);
-        }
-        printf("\n");
+    if(rank == 0){
+        numbers = loadNumbers();
+        printNumbers(numbers);
     }
-
+    
+    //MPI_Comm_size(MPI_COMM_WORLD, &size);
+    //cout << "I am" << rank << " of " << size << endl;
     MPI_Finalize();
 
 

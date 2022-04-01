@@ -8,4 +8,4 @@ int main(int argc, char *argv[]){
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     printf("I am %d of %d\n", rank, size);
     MPI_Finalize();
-    return EXIT_SUCCESS;
+    return 0;

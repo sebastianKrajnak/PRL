@@ -67,14 +67,16 @@ int main(int argc, char *argv[]){
         fstream srcFile;
         srcFile.open("numbers", ios::in);
 
-        while(srcFile.good()){
-            int number = 0;
-            for(int i = 0; i < 8; i++){
-                number = srcFile.get();
-                if(srcFile.eof())
-                    break;
-                
-                numbers[i] = number;
+        if(srcFile.is_open()){
+            while(srcFile.good()){
+                int number = 0;
+                for(int i = 0; i < 8; i++){
+                    number = srcFile.get();
+                    if(srcFile.eof())
+                        break;
+                    
+                    numbers[i] = number;
+                }
             }
         }
         srcFile.close();
@@ -88,15 +90,15 @@ int main(int argc, char *argv[]){
     }
 
     // Receive numbers from previous processors and send the min/max to the next set of processors
-    MPI_Recv(&receivedNums[0], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, nullptr);
-    MPI_Recv(&receivedNums[1], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, nullptr);
+    MPI_Recv(&receivedNums[0], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&receivedNums[1], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     oddEvenMergeSort(rank, processors, receivedNums);
 
     // In the end, master processor will receive sorted numbers and print them out
     if(rank == 0){
         for(int i = 0; i < 8; i++){
-            MPI_Recv(&sortedNums[i], 1, MPI_INT, outputProcs[i], 0, MPI_COMM_WORLD, nullptr);
+            MPI_Recv(&sortedNums[i], 1, MPI_INT, outputProcs[i], 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
         for(int i = 0; i< 8; i++){
             cout << sortedNums[i] << endl;

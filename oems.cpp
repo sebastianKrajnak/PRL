@@ -9,6 +9,7 @@
 
 using namespace std;
 
+// Function to check if numbers are loaded and if so, print them out
 void printNumbers(int *numbers){
     if(sizeof(numbers) == 0){
         cout << "Error numbers not loaded!";
@@ -22,7 +23,7 @@ void printNumbers(int *numbers){
 }
 
 /*
-    function which receives a processor's rank, 2D array of receiver procs
+    Function which receives a processor's rank, 2D array of receiver procs
     and received numbers from the previous two processors. Sorts the numbers into maximum and minimum
     then sends them out to the next two processors in line based on 2D array position
 */
@@ -35,7 +36,7 @@ void oddEvenMergeSort(int rank, int processors[][2], int *receivedNums){
 }
 
 int main(int argc, char *argv[]){
-
+    
     int rank;
     int numbers[8] = {};
     int receivedNums[2] = {};

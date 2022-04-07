@@ -27,7 +27,12 @@ void printNumbers(int *numbers){
     and received numbers from the previous two processors. Sorts the numbers into maximum and minimum
     then sends them out to the next two processors in line based on 2D array position
 */
-void oddEvenMergeSort(int rank, int processors[][2], int *receivedNums){
+void oddEvenMergeSort(int rank, int processors[][2]){
+    int receivedNums[2] = {};
+
+    MPI_Recv(&receivedNums[0], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&receivedNums[1], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
     int minimum = min(receivedNums[0], receivedNums[1]);
     int maximum = max(receivedNums[0], receivedNums[1]);
 
@@ -39,7 +44,6 @@ int main(int argc, char *argv[]){
     
     int rank;
     int numbers[8] = {};
-    int receivedNums[2] = {};
     int sortedNums[8] = {};
     /*
         2D array of processors where: pos 0 and 1 are receiving processors of the 
@@ -90,11 +94,8 @@ int main(int argc, char *argv[]){
         }
     }
 
-    // Receive numbers from previous processors and send the min/max to the next set of processors
-    MPI_Recv(&receivedNums[0], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    MPI_Recv(&receivedNums[1], 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-    oddEvenMergeSort(rank, processors, receivedNums);
+    // Receive numbers from previous processors and send the two numbers sorted to the next set of processors
+    oddEvenMergeSort(rank, processors);
 
     // In the end, master processor will receive sorted numbers and print them out
     if(rank == 0){

@@ -10,7 +10,7 @@
 using namespace std;
 
 // Function to check if numbers are loaded and if so, print them out
-void printNumbers(int *numbers){
+void checkNumbers(int *numbers){
     if(sizeof(numbers) == 0){
         cout << "Error numbers not loaded!";
     }
@@ -18,14 +18,14 @@ void printNumbers(int *numbers){
         for(int i = 0; i < 8; i++){
             cout << numbers[i] << ' ';
         }
+        cout << endl;
     }
-    cout << endl;
 }
 
 /*
-    Function which receives a processor's rank, 2D array of receiver procs
-    and received numbers from the previous two processors. Sorts the numbers into maximum and minimum
-    then sends them out to the next two processors in line based on 2D array position
+    Function which receives a processor's rank and 2D array of receiver procs
+    from the previous two processors. Sorts the numbers into maximum and minimum
+    then sends them out to the next two processors in line based on the position in said 2D array 
 */
 void oddEvenMergeSort(int rank, int processors[][2]){
     int receivedNums[2] = {};
@@ -46,8 +46,8 @@ int main(int argc, char *argv[]){
     int numbers[8] = {};
     int sortedNums[8] = {};
     /*
-        2D array of processors where: pos 0 and 1 are receiving processors of the 
-        sender processor (IDed by rank)
+        2D array of processors where: col 0 and 1 are the next two receiving processors of the 
+        sender processor whose rank = row number
     */
     int processors[19][2]={
         {4,5}, {4,5}, {6,7}, {6,7},
@@ -58,23 +58,22 @@ int main(int argc, char *argv[]){
     };
     /* 
         Array of processors outputting correct sequence of sorted numbers, otherwise 
-        numbers would be sorted on the processors but they would be saved 
-        randomly, depending on who sent their answer first, in the array
+        numbers would be sorted on the processors but they would be saved into the array 
+        randomly, due to the asynchronity of sending order
      */
     int outputProcs[8] = {10,16,16,17,17,18,18,13};
     
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
-    // Master processor loads numbers from input binary file a sends them out to
-    // the first layer of sorting processors
+    // Master processor loads numbers from input binary file a sends them out to the first layer of sorting processors
     if(rank == 0){
         fstream srcFile;
         srcFile.open("numbers", ios::in);
 
         if(srcFile.is_open()){
             while(srcFile.good()){
-                int number = 0;
+                int number;
                 for(int i = 0; i < 8; i++){
                     number = srcFile.get();
                     if(srcFile.eof())
@@ -86,7 +85,7 @@ int main(int argc, char *argv[]){
         }
         srcFile.close();
 
-        printNumbers(numbers);
+        checkNumbers(numbers);
 
         for(int i = 0; i < 8; i+= 2){
             MPI_Send(&numbers[i], 1, MPI_INT, i/2, 0, MPI_COMM_WORLD);

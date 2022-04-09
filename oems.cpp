@@ -1,7 +1,7 @@
 /*
     Parallel Odd-even Merge Sort using OpenMPI
     Author: Sebastian Krajnak
-    Date: 5.4.2022 
+    Date: 8.4.2022 
 */
 #include <mpi.h>
 #include <iostream>
@@ -23,8 +23,7 @@ void checkNumbers(int *numbers){
 }
 
 /*
-    Function which receives a processor's rank and 2D array of receiver procs
-    from the previous two processors. Sorts the numbers into maximum and minimum
+    Function which receives a processor's rank and 2D array of receiver procs. Sorts the numbers into maximum and minimum
     then sends them out to the next two processors in line based on the position in said 2D array 
 */
 void oddEvenMergeSort(int rank, int processors[][2]){

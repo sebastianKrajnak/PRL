@@ -3,6 +3,7 @@ Project for parallel algorithms class focusing on the implementation of parallel
 
 ## Requirements
 OpenMPI library
+
 C++ (gcc) 7.5.0
 
 ## Running the implementation
